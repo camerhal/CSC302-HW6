@@ -1,0 +1,55 @@
+---
+title: "HW6"
+author: "Cameron Hall - camerhal@umich.edu"
+date: "4/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+```
+
+2. Load house_prices.rda in R and perform the followings:
+
+ (a) Use facet_wrap to draw line plots to represent the trend for house_price_index over years for each state. .
+ Please have three ticks on the x axis which are for years 1980, 2000, and 2020. Since you have limited space your
+ labels can be ’80, ’00, and ’20 for these ticks.
+
+ (b) Use gather() function from tidyr to reshape your data in a way that it will have measure and value columns
+ for house_price_index and unemploy_perc, respectively, in two columns. You should leave out remaining
+ attributes by using ”-” in front them inside the function. Then, direct the output to a new data frame called
+ house_reshaped Please refer to examples we did in class.
+
+ (c) Use house_reshaped to replicate the graph in 2a with two lines where each represents house_price_index
+  unemploy_perc over the years for each state. Once you have the chart, please comment on it as to whether
+ it’s a good graph to present those two pieces of information.
+
+ (d) When you achieve the goals above, please create a R markdown file and create an HTML page which has your
+ codes and charts including your comments.
+
+
+```{r, fig.width=10}
+library(ggplot2)
+library(tidyr)
+
+load("G:/.shortcut-targets-by-id/1ehWwunuAo7CE1Vk2JYkUnQMmxh5pph3C/DATA/house_prices.rda")
+prices = house_prices
+
+
+#2a
+ggplot(data=prices, aes(x=date, y=house_price_index)) +
+  geom_smooth() +
+  facet_wrap(~state, ncol = 10) +
+  scale_x_date(name='Year', date_breaks = '20 years', date_labels = '%y', limits = as.Date(c('1964-01-01', '2026-01-01'), breaks = as.Date(c('1980-01-01', '2020-01-01'))))
+
+#2b
+house_reshaped <- gather(prices, measure, value, -1, -2, -5) 
+
+#2c
+ggplot(data = house_reshaped, aes(x=date, y=value, group=measure, color=measure)) +
+  geom_smooth() +
+  facet_wrap(~state, ncol = 10) +
+  scale_x_date(name='Year', date_breaks = '20 years', date_labels = '%y', limits = as.Date(c('1964-01-01', '2026-01-01'), breaks = as.Date(c('1980-01-01', '2020-01-01'))))
+#This is a poor graph to use to visualize these two data points. The values for house_price_index are significantly larger than values for unemploy_perc,
+# making it difficult to compare these two. The unemploy_perc line appears almost flat because of a small scale.  
+
+```
